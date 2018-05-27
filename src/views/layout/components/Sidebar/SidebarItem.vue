@@ -47,13 +47,13 @@ export default {
   methods: {
     hasOneShowingChildren(children) {
       const showingChildren = children.filter(item => {
-        return !item.hidden
-      })
+        return !item.hidden;
+      });
       if (showingChildren.length === 1) {
-        return true
+        return true;
       }
-      return false
+      return false;
     }
   }
-}
+};
 </script>

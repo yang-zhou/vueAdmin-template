@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request';
 
 export function login(username, password) {
   return request({
@@ -8,7 +8,7 @@ export function login(username, password) {
       username,
       password
     }
-  })
+  });
 }
 
 export function getInfo(token) {
@@ -16,12 +16,12 @@ export function getInfo(token) {
     url: '/user/info',
     method: 'get',
     params: { token }
-  })
+  });
 }
 
 export function logout() {
   return request({
     url: '/user/logout',
     method: 'post'
-  })
+  });
 }

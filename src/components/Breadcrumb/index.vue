@@ -12,29 +12,29 @@
 <script>
 export default {
   created() {
-    this.getBreadcrumb()
+    this.getBreadcrumb();
   },
   data() {
     return {
       levelList: null
-    }
+    };
   },
   watch: {
     $route() {
-      this.getBreadcrumb()
+      this.getBreadcrumb();
     }
   },
   methods: {
     getBreadcrumb() {
-      let matched = this.$route.matched.filter(item => item.name)
-      const first = matched[0]
+      let matched = this.$route.matched.filter(item => item.name);
+      const first = matched[0];
       if (first && first.name !== 'dashboard') {
-        matched = [{ path: '/dashboard', meta: { title: 'Dashboard' }}].concat(matched)
+        matched = [{ path: '/dashboard', meta: { title: 'Dashboard' }}].concat(matched);
       }
-      this.levelList = matched
+      this.levelList = matched;
     }
   }
-}
+};
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
