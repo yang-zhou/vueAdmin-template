@@ -1,5 +1,5 @@
 <template>
-  <el-menu class="navbar" mode="horizontal">
+  <el-menu id="navbar" class="navbar" mode="horizontal">
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
     <el-dropdown class="avatar-container" trigger="click">
@@ -46,6 +46,11 @@ export default {
         location.reload(); // 为了重新实例化vue-router对象 避免bug
       });
     }
+  },
+  mounted() {
+    const navbar = document.getElementById('navbar');
+    const height = window.getComputedStyle(navbar, null).height;
+    this.$store.dispatch('SET_NAVHEIGHT', { height: height });
   }
 };
 </script>

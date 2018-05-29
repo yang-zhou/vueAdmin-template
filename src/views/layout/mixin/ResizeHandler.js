@@ -13,6 +13,7 @@ export default {
     }
   },
   beforeMount() {
+    this.storedCurrentClientHeight();
     window.addEventListener('resize', this.resizeHandler);
   },
   mounted() {
@@ -35,6 +36,13 @@ export default {
         if (isMobile) {
           store.dispatch('CloseSideBar', { withoutAnimation: true });
         }
+      }
+      this.storedCurrentClientHeight();
+    },
+    storedCurrentClientHeight() {
+      const clientHeight = document.body.clientHeight;
+      if (clientHeight) {
+        store.dispatch('SET_CLIENT_HEIGHT', { height: clientHeight });
       }
     }
   }
