@@ -3,21 +3,27 @@
     <el-col :span="4" class="cel-col">
       <el-row class="custom-tabs">
         <el-col :span="24" style="height:5%">
-          <el-col id="1" :span="6" class="el-tabs__item" :class="{'is-active':active==1}" @click.native="changeChartType($event)">
-            <i aria-hidden="true" class="fa fa-bar-chart" style=""></i>
+          <el-col id="1" :span="6" class="el-tabs__item" :class="{'is-active':active==1}" @click.native="changeChartType">
+            <i aria-hidden="true" class="fa fa-bar-chart"></i>
           </el-col>
-          <el-col id="2" :span="6" class="el-tabs__item" :class="{'is-active':active==2}" @click.native="changeChartType($event)">
+          <el-col id="2" :span="6" class="el-tabs__item" :class="{'is-active':active==2}" @click.native="changeChartType">
             <i aria-hidden="true" class="fa fa-table"></i>
           </el-col>
-          <el-col id="3" :span="6" class="el-tabs__item" :class="{'is-active':active==3}" @click.native="changeChartType($event)">
+          <el-col id="3" :span="6" class="el-tabs__item" :class="{'is-active':active==3}" @click.native="changeChartType">
             <i aria-hidden="true" class="fa fa-pie-chart"></i>
           </el-col>
-          <el-col id="4" :span="6" class="el-tabs__item" :class="{'is-active':active==4}" @click.native="changeChartType($event)">
+          <el-col id="4" :span="6" class="el-tabs__item" :class="{'is-active':active==4}" @click.native="changeChartType">
             <i aria-hidden="true" class="fa fa-user-circle"></i>
           </el-col>
         </el-col>
         <el-col v-if="active==1" :span="24" style="height:95%">
-          1
+          <vue-scroll :ops="ops">
+            <el-row style="font-size:50px">
+              <el-col :span="12" style="padding-top:15px;" v-for="(icon,index) in chartIcons" :key="index" draggable="true">
+                <a aria-hidden="true" :class="icon.iconClazz"></a>
+              </el-col>
+            </el-row>
+          </vue-scroll>
         </el-col>
         <el-col v-if="active==2" :span="24" style="height:95%">
           2
@@ -29,34 +35,44 @@
           4
         </el-col>
       </el-row>
-      <!--<div class="el-tabs__nav-scroll">
-        <div role="tablist" class="el-tabs__nav" style="transform: translateX(0px);">
-          <div class="el-tabs__active-bar is-top" style="width: 19px; transform: translateX(0px);"></div>
-          <div id="tab-0" aria-controls="pane-0" role="tab" aria-selected="true" tabindex="0" class="el-tabs__item is-top is-active">
-            <span data-v-56ceeb23="" class="tab-label" style="width: 25%;"><i data-v-56ceeb23="" aria-hidden="true" class="fa fa-bar-chart"></i></span>
-          </div>
-          <div id="tab-1" aria-controls="pane-1" role="tab" tabindex="-1" class="el-tabs__item is-top">
-            <span data-v-56ceeb23="" class="tab-label"><i data-v-56ceeb23="" aria-hidden="true" class="fa fa-table"></i></span>
-          </div>
-          <div id="tab-2" aria-controls="pane-2" role="tab" tabindex="-1" class="el-tabs__item is-top">
-            <span data-v-56ceeb23="" class="tab-label"><i data-v-56ceeb23="" aria-hidden="true" class="fa fa-pie-chart"></i></span>
-          </div>
-          <div id="tab-3" aria-controls="pane-3" role="tab" tabindex="-1" class="el-tabs__item is-top">
-            <span data-v-56ceeb23="" class="tab-label"><i data-v-56ceeb23="" aria-hidden="true" class="fa fa-user-circle"></i></span>
-          </div>
-        </div>
-      </div>-->
     </el-col>
-    <el-col :span="20" class="cel-col"><div style="border:solid;height:100%"></div></el-col>
+    <el-col :span="20" class="cel-col" style="height:100%;" @drop.native="dropDownElement" @dragover.native.prevent>
+      <div style="height:100%;width:100%;border:solid blue">
+        <VueDragResize :parentLimitation="true" :isActive="true" :x="300" :w="200" :h="200" v-on:resizing="resize" v-on:dragging="resize">
+          <h3>Hello World!</h3>
+          <p>{{ top }} х {{ left }} </p>
+          <p>{{ width }} х {{ height }}</p>
+        </VueDragResize>
+      </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
+import VueDragResize from 'vue-drag-resize';
+
+function ChartIcon(iconClazz) {
+  this.iconClazz = iconClazz;
+}
 export default {
   name: 'model',
+  components: {
+    VueDragResize
+  },
   data() {
     return {
-      active: 1
+      ops: {
+        rail: {
+          vRail: {
+            width: '3px'
+          }
+        }
+      },
+      active: 1,
+      width: 0,
+      height: 0,
+      top: 0,
+      left: 0
     };
   },
   mounted() {
@@ -64,14 +80,33 @@ export default {
   computed: {
     contentHeight() {
       return this.$store.state.app.clientHeight - this.$store.state.app.navHeight;
+    },
+    chartIcons() {
+      const icons = [];
+      for (let i = 0; i < 100; i++) {
+        icons.push(new ChartIcon('fa fa-bar-chart'));
+      }
+      return icons;
     }
   },
   methods: {
-    changeChartType($event) {
-      const currentId = $event.currentTarget.id;
+    changeChartType(event) {
+      const currentId = event.currentTarget.id;
       if (currentId) {
         this.active = currentId;
       }
+    },
+    resize(newRect) {
+      this.width = newRect.width;
+      this.height = newRect.height;
+      this.top = newRect.top;
+      this.left = newRect.left;
+    },
+    dropDownElement(event) {
+      console.log(event.offsetX + '-------' + event.offsetY);
+    },
+    dragOverElement(event) {
+      event.preventDefault();
     }
   }
 };
@@ -84,6 +119,7 @@ export default {
   .custom-tabs {
     height: 100%;
     text-align:center;
+    border-right:solid 1px #e6e6e6
   }
   .custom-tabs > div:first-child {
     border-bottom:solid 1px #e6e6e6
